@@ -1,7 +1,5 @@
-import 'dart:async';
-
 import 'package:hello_flutter/data/session.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 Future<void> initTables() async {
   await Future.wait([
@@ -10,8 +8,9 @@ Future<void> initTables() async {
 }
 
 abstract interface class Table<T> {
-  List<T> getValues();
-  putValue(T value);
+  List<T> getItems();
+  putItem(T item);
+  removeItem(T item);
 }
 
 class SleepSessionTable implements Table<SleepSession> {
@@ -35,12 +34,22 @@ class SleepSessionTable implements Table<SleepSession> {
   }
 
   @override
-  List<SleepSession> getValues() {
+  List<SleepSession> getItems() {
     return Hive.box(name).values.map((e) => SleepSession.fromJson(e)).toList();
   }
 
   @override
-  putValue(SleepSession value) {
-    Hive.box(name).add(value.toJson());
+  bool putItem(SleepSession item) {
+    Hive.box(name).add(item.toJson());
+    return true;
+  }
+
+  @override
+  bool removeItem(SleepSession item) {
+    if (item.id == null || item != Hive.box(name).getAt(item.id!)) {
+      return false;
+    }
+    Hive.box(name).deleteAt(item.id!);
+    return true;
   }
 }
