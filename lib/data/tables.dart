@@ -1,4 +1,4 @@
-import 'package:hello_flutter/data/session.dart';
+import 'package:shleappy/data/session.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 Future<void> initTables() async {

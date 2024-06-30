@@ -1,7 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hello_flutter/data/session.dart';
-import 'package:hello_flutter/data/tables.dart';
+import 'package:shleappy/data/session.dart';
+import 'package:shleappy/data/tables.dart';
 
 class SleepSessionHistory {
   List<SleepSession> _sessions;

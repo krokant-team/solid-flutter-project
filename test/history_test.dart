@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hello_flutter/data/history.dart';
-import 'package:hello_flutter/data/session.dart';
+import 'package:shleappy/data/history.dart';
+import 'package:shleappy/data/session.dart';
 
 void main() {
   test('History should sort by start time ascending, then give a week interval',
