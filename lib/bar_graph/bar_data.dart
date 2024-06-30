@@ -1,6 +1,6 @@
+import 'package:shleappy/data/session.dart';
 import 'individual_bar.dart';
 
-// TODO
 class BarData {
   final List<double> amounts;
   List<IndividualBar> barData = [];
@@ -10,7 +10,7 @@ class BarData {
   void initBarData() {
     barData = List.generate(
       amounts.length,
-      (index) => IndividualBar(day: Day.values[index%7], amount: amounts[index]),
+      (index) => IndividualBar(day: index, amount: amounts[index]),
     );
   }
 }
