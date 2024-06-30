@@ -15,7 +15,7 @@ class SleepSessionHistory {
   factory SleepSessionHistory.fromTable() =>
       SleepSessionHistory(SleepSessionTable.instance.getItems());
 
-  List<SleepSession> forDayPeiod(DateTime start, DateTime end) {
+  List<SleepSession> intervalInDays(DateTime start, DateTime end) {
     if (_sessions.isEmpty) return [];
     var iEnd = _sessions.lowerBoundBy<DateTime>(
       SleepSession.copy(_sessions[0])..started = start,
@@ -23,10 +23,11 @@ class SleepSessionHistory {
     );
     do {
       ++iEnd;
-    } while (
-        iEnd < _sessions.length && _sessions[iEnd].started.compareTo(end) <= 0);
+    } while (iEnd < _sessions.length &&
+        _sessions[iEnd].started.difference(end).inDays <= 0);
     var iStart = iEnd;
-    while (iStart > 0 && _sessions[iStart - 1].ended.compareTo(start) >= 0) {
+    while (iStart > 0 &&
+        _sessions[iStart - 1].ended.difference(start).inDays >= 0) {
       --iStart;
     }
     return _sessions.sublist(iStart, iEnd);
