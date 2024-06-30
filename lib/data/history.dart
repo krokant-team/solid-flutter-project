@@ -35,7 +35,9 @@ class SleepSessionHistory {
 }
 
 class SleepSessionHistoryNotifier extends Notifier<SleepSessionHistory> {
-  static final provider = NotifierProvider(() => SleepSessionHistoryNotifier());
+  static final provider =
+      NotifierProvider<SleepSessionHistoryNotifier, SleepSessionHistory>(
+          () => SleepSessionHistoryNotifier());
 
   bool _isListened = false;
 
@@ -45,6 +47,7 @@ class SleepSessionHistoryNotifier extends Notifier<SleepSessionHistory> {
     ref.onCancel(() {
       _isListened = false;
     });
+    // TODO check whether onResume method is called on ref.read(...)
     ref.onResume(() {
       _isListened = true;
       update();
