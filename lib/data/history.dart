@@ -35,6 +35,8 @@ class SleepSessionHistory {
 }
 
 class SleepSessionHistoryNotifier extends Notifier<SleepSessionHistory> {
+  static final provider = NotifierProvider(() => SleepSessionHistoryNotifier());
+
   bool _isListened = false;
 
   @override
