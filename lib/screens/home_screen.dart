@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shleappy/animation.dart';
 import 'package:shleappy/data/session.dart';
 import 'package:shleappy/screens/dialogs/dialog_windows.dart';
 
@@ -85,26 +86,35 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     double screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
-      appBar: _homeAppBar(context),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            if (ref.read(isSleepingProvider)) {
-              ref.read(endSleepTimeProvider.notifier).state = DateTime.now();
-              DialogWindows.showFeedbackDialog(context, ref);
-            } else {
-              ref.read(startSleepTimeProvider.notifier).state = DateTime.now();
-            }
+        appBar: _homeAppBar(context),
+        body: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const MoonPainterWidget(),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.015,
+              ),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (ref.read(isSleepingProvider)) {
+                      ref.read(endSleepTimeProvider.notifier).state =
+                          DateTime.now();
+                      DialogWindows.showFeedbackDialog(context, ref);
+                    } else {
+                      ref.read(startSleepTimeProvider.notifier).state =
+                          DateTime.now();
+                    }
 
-            ref.read(isSleepingProvider.notifier).state =
-                !ref.watch(isSleepingProvider);
-          },
-          style: _styleElevatedButton(context, screenWidth),
-          child: _contentElevatedButton(context, ref, screenWidth),
-        ),
-      ),
-    );
+                    ref.read(isSleepingProvider.notifier).state =
+                        !ref.watch(isSleepingProvider);
+                  },
+                  style: _styleElevatedButton(context, screenWidth),
+                  child: _contentElevatedButton(context, ref, screenWidth),
+                ),
+              ),
+            ]));
   }
 }
