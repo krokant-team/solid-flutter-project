@@ -1,0 +1,41 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - ci/cd
+  pull_request:
+    branches:
+      - ci/cd
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.22.1'
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Format code
+      run: flutter format .
+
+    - name: Run linters
+      run: flutter analyze
+
+    - name: Run tests
+      run: flutter test
+
+    - name: Build web app
+      run: flutter build web
+
+    - name: Deploy to GitHub Pages
+      uses: bluefireteam/actions-gh-pages@v7
+      with:
+        baseHref: "/shleappy/"
+        target: "lib/main.dart"
+        github_token: ${{ secrets.GITHUB_TOKEN }}
