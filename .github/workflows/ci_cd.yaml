@@ -24,9 +24,6 @@ jobs:
     - name: Install dependencies
       run: flutter pub get
 
-    - name: Format code
-      run: flutter format .
-
     - name: Run linters
       run: flutter analyze --no-fatal-warnings --no-fatal-infos
 
