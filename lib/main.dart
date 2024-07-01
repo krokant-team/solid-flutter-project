@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shleappy/data/tables.dart';
 import 'package:shleappy/screens/home_screen.dart';
 import 'navigation_widget.dart';
 
-void main() {
+void main() async {
+  await SleepSessionTable.init();
   runApp(const ProviderScope(child: MyApp()));
 }
 

@@ -49,7 +49,7 @@ class SleepSession {
       );
 
   factory SleepSession.fromJson(Map json) => SleepSession(
-        id: json[fieldId],
+        id: json[fieldId] ?? 0,
         started: DateTime.fromMillisecondsSinceEpoch(json[fieldStarted] ?? 0),
         ended: DateTime.fromMillisecondsSinceEpoch(json[fieldEnded] ?? 0),
         quality: json[fieldQuality] ?? 0,
