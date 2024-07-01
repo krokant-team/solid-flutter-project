@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shleappy/data/tables.dart';
+import 'package:shleappy/ui/week_list.dart';
 
-void main() {
+main() async {
+  await initTables();
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -21,6 +24,8 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      body: SleepWeekWidget(),
+    );
   }
 }

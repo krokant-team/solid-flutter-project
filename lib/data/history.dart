@@ -3,6 +3,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shleappy/data/session.dart';
 import 'package:shleappy/data/tables.dart';
 
+class SessionWeek {
+  static const int weekDays = 7;
+
+  List<SleepSession> sessions = [];
+  Date start;
+  Date end;
+
+  SessionWeek(Date anyDate)
+      : start = getWeekStart(anyDate),
+        end = getWeekEnd(anyDate);
+
+  static Date getWeekStart(Date date) =>
+      date - Duration(days: date.weekday - DateTime.monday);
+  static Date getWeekEnd(Date date) =>
+      date + Duration(days: DateTime.sunday - date.weekday);
+  SessionWeek next() => SessionWeek(start + const Duration(days: weekDays));
+  SessionWeek previous() => SessionWeek(start - const Duration(days: weekDays));
+}
+
 class SleepSessionHistory {
   List<SleepSession> _sessions;
 
@@ -45,6 +64,12 @@ class SleepSessionHistory {
       --iStart;
     }
     return _sessions.sublist(iStart, iEnd);
+  }
+
+  SessionWeek getSessionWeek(Date date) {
+    var sessionWeek = SessionWeek(date);
+    sessionWeek.sessions = intervalInDays(sessionWeek.start, sessionWeek.end);
+    return sessionWeek;
   }
 }
 

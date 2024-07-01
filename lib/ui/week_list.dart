@@ -1,10 +1,13 @@
 import 'package:date_only_field/date_only_field_with_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:shleappy/data/history.dart';
 import 'package:shleappy/data/session.dart';
 
-class _ChosenSession extends Notifier<SleepSession?> {
+const int _weekDays = 7;
+
+class ChosenSession extends Notifier<SleepSession?> {
   @override
   SleepSession? build() {
     return null;
@@ -21,7 +24,7 @@ class _SessionButton extends ConsumerWidget {
   final SleepSession session;
   final Date weekStart;
   final Date weekEnd;
-  final NotifierProvider<_ChosenSession, SleepSession?> chosenProvider;
+  final NotifierProvider<ChosenSession, SleepSession?> chosenProvider;
 
   const _SessionButton(
     this.session, {
@@ -61,41 +64,89 @@ class _SessionButton extends ConsumerWidget {
   }
 }
 
+class ChosenWeek extends Notifier<SessionWeek> {
+  late final SleepSessionHistory _history;
+
+  @override
+  SessionWeek build() {
+    _history = ref.watch(SleepSessionHistoryNotifier.provider);
+    return _history.getSessionWeek(Date.now());
+  }
+
+  nextWeek() {
+    state = _history.getSessionWeek(state.next().start);
+  }
+
+  previousWeek() {
+    state = _history.getSessionWeek(state.previous().start);
+  }
+}
+
 class _WeekGrid extends ConsumerWidget {
-  static const int days = 7;
   static const double _rowheight = 75;
 
-  final chosenProvider =
-      NotifierProvider<_ChosenSession, SleepSession?>(() => _ChosenSession());
-  final Date start;
-  final Date end;
+  final NotifierProvider<ChosenWeek, SessionWeek> weekProvider;
+  final NotifierProvider<ChosenSession, SleepSession?> chosenProvider;
 
-  _WeekGrid(this.start) : end = start + const Duration(days: days - 1);
+  const _WeekGrid({required this.weekProvider, required this.chosenProvider});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final week = ref
-        .watch(SleepSessionHistoryNotifier.provider)
-        .intervalInDays(start, end);
-    return Stack(
-      fit: StackFit.expand,
+    final week = ref.watch(weekProvider);
+    return Column(
       children: [
-        buildLayoutMat(),
-        SingleChildScrollView(child: buildButtonGrid(ref, week)),
+        _buildWeekDates(week),
+        Stack(
+          fit: StackFit.passthrough,
+          children: [
+            _buildLayoutMat(),
+            SingleChildScrollView(child: _buildButtonGrid(ref, week)),
+          ],
+        ),
       ],
     );
   }
 
-  Widget buildLayoutMat() {
+  Widget _buildWeekDate(Date date) {
+    return Builder(
+      builder: (context) => Center(
+        child: Column(
+          children: [
+            Text(
+              "${date.day}",
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            Text(
+              DateFormat.E().format(date.toDateTime()),
+              style: Theme.of(context).textTheme.labelSmall,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeekDates(SessionWeek week) {
+    List<Widget> widgets = [];
+    for (var date = week.start;
+        !date.isAfter(week.end);
+        date += const Duration(days: 1)) {
+      widgets.add(_buildWeekDate(date));
+    }
+    return Row(mainAxisSize: MainAxisSize.max, children: widgets);
+  }
+
+  Widget _buildLayoutMat() {
     List<Widget> children = [const Spacer()];
-    for (int i = 1; i < days; ++i) {
+    for (int i = 1; i < _weekDays; ++i) {
       children.add(const VerticalDivider(thickness: 2, width: 0));
       children.add(const Spacer());
     }
-    return Row(mainAxisSize: MainAxisSize.max, children: children);
+    return Row(mainAxisSize: MainAxisSize.min, children: children);
   }
 
-  Widget buildButtonRow(WidgetRef ref, List<SleepSession> row) {
+  Widget _buildButtonRow(WidgetRef ref, List<SleepSession> row,
+      {required SessionWeek week}) {
     var iter = row.iterator;
     if (!iter.moveNext()) {
       return const Row(
@@ -107,7 +158,9 @@ class _WeekGrid extends ConsumerWidget {
     List<Widget> widgets = [];
     var flex = 0;
     var space = false;
-    for (Date c = start; !c.isAfter(end); c += const Duration(days: 1)) {
+    for (Date c = week.start;
+        !c.isAfter(week.end);
+        c += const Duration(days: 1)) {
       if (!c.isBefore(iter.current.startDate) &&
           !c.isAfter(iter.current.endDate)) {
         if (space) {
@@ -122,14 +175,14 @@ class _WeekGrid extends ConsumerWidget {
               flex: flex,
               child: _SessionButton(
                 iter.current,
-                weekStart: start,
-                weekEnd: end,
+                weekStart: week.start,
+                weekEnd: week.end,
                 chosenProvider: chosenProvider,
               )));
           flex = 0;
           if (!iter.moveNext()) {
-            if (c.isBefore(end)) {
-              widgets.add(Spacer(flex: end.difference(c).inDays));
+            if (c.isBefore(week.end)) {
+              widgets.add(Spacer(flex: week.end.difference(c).inDays));
               break;
             }
           }
@@ -149,9 +202,9 @@ class _WeekGrid extends ConsumerWidget {
     );
   }
 
-  Widget buildButtonGrid(WidgetRef ref, List<SleepSession> week) {
+  Widget _buildButtonGrid(WidgetRef ref, SessionWeek week) {
     List<List<SleepSession>> rows = [[], [], []];
-    for (SleepSession session in week) {
+    for (SleepSession session in week.sessions) {
       bool f = false;
       for (List<SleepSession> row in rows) {
         if (row.isEmpty || row.last.endDate.isBefore(session.startDate)) {
@@ -169,8 +222,72 @@ class _WeekGrid extends ConsumerWidget {
       children: rows
           .map((e) => SizedBox.fromSize(
               size: const Size.fromHeight(_rowheight),
-              child: buildButtonRow(ref, e)))
+              child: _buildButtonRow(ref, e, week: week)))
           .toList(),
+    );
+  }
+}
+
+class WeekSwitch extends ConsumerWidget {
+  final NotifierProvider<ChosenWeek, SessionWeek> weekProvider;
+
+  const WeekSwitch({required this.weekProvider, super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final week = ref.watch(weekProvider);
+    final bool sameYear = week.start.year == week.end.year;
+    final String label = week.start.isSameMonth(week.end)
+        ? "${DateFormat.MMMM().format(week.start.toDateTime())} ${week.start.year}"
+        : "${DateFormat.MMMM().format(week.start.toDateTime())}${sameYear ? '' : ' ${week.start.year}'} - ${DateFormat.MMMM().format(week.end.toDateTime())} ${week.end.year}";
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _buildButton(
+          icon: const Icon(Icons.arrow_left),
+          onPressed: () {
+            ref.read(weekProvider.notifier).previousWeek();
+          },
+        ),
+        Text(label, style: Theme.of(context).textTheme.titleMedium),
+        _buildButton(
+          icon: const Icon(Icons.arrow_right),
+          onPressed: () {
+            ref.read(weekProvider.notifier).nextWeek();
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildButton(
+          {required Icon icon, required void Function()? onPressed}) =>
+      OutlinedButton(
+        child: icon,
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          shape: CircleBorder(),
+        ),
+      );
+}
+
+class SleepWeekWidget extends ConsumerWidget {
+  final NotifierProvider<ChosenWeek, SessionWeek> weekProvider =
+      NotifierProvider(() => ChosenWeek());
+  final NotifierProvider<ChosenSession, SleepSession?> chosenProvider =
+      NotifierProvider(() => ChosenSession());
+
+  SleepWeekWidget({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        WeekSwitch(weekProvider: weekProvider),
+        _WeekGrid(weekProvider: weekProvider, chosenProvider: chosenProvider),
+      ],
     );
   }
 }
