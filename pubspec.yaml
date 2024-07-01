@@ -38,7 +38,7 @@ dependencies:
   fl_chart: ^0.68.0
   hive_flutter: ^1.1.0
   flutter_riverpod: ^2.5.1
-  collection: ^1.18.0
+  date_only_field: ^0.0.14
   intl: ^0.19.0
 
 dev_dependencies:

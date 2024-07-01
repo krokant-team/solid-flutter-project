@@ -1,4 +1,4 @@
-import 'package:collection/collection.dart';
+import 'package:date_only_field/date_only_field_with_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shleappy/data/session.dart';
 import 'package:shleappy/data/tables.dart';
@@ -15,19 +15,34 @@ class SleepSessionHistory {
   factory SleepSessionHistory.fromTable() =>
       SleepSessionHistory(SleepSessionTable.instance.getItems());
 
-  List<SleepSession> intervalInDays(DateTime start, DateTime end) {
-    if (_sessions.isEmpty) return [];
-    var iEnd = _sessions.lowerBoundBy<DateTime>(
-      SleepSession.copy(_sessions[0])..started = start,
-      (e) => e.started,
-    );
+  int _findStartingDate(Date date) {
+    if (_sessions.isEmpty) return -1;
+    var start = 0, end = _sessions.length;
+    var mid = (end + start) ~/ 2;
+    while (true) {
+      var d = date.difference(_sessions[mid].started);
+      if (d.inDays == 0 || mid == start) {
+        break;
+      } else if (d.isNegative) {
+        end = mid;
+        mid = (end + start) ~/ 2;
+      } else {
+        start = mid;
+        mid = (end + start) ~/ 2;
+      }
+    }
     do {
-      ++iEnd;
-    } while (iEnd < _sessions.length &&
-        _sessions[iEnd].started.difference(end).inDays <= 0);
+      ++mid;
+    } while (mid < end && date.difference(_sessions[mid].started).inDays == 0);
+    return mid;
+  }
+
+  List<SleepSession> intervalInDays(Date start, Date end) {
+    if (_sessions.isEmpty) return [];
+    var iEnd = _findStartingDate(end);
     var iStart = iEnd;
     while (iStart > 0 &&
-        _sessions[iStart - 1].ended.difference(start).inDays >= 0) {
+        start.difference(_sessions[iStart - 1].ended).inDays < 0) {
       --iStart;
     }
     return _sessions.sublist(iStart, iEnd);
