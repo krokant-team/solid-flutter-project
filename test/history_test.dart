@@ -25,8 +25,8 @@ void main() {
     var history = SleepSessionHistory(sessionList);
     expect(history.sessions.first.started.day, 1);
     expect(history.sessions.last.started.day, 19);
-    var interval =
-        history.intervalInDays(Date(2024, 01, 01), Date(2024, 01, 07));
-    expect(interval.map((e) => e.started.day).toList(), [1, 3, 4, 5, 6, 7]);
+    var sessionWeek = history.getSessionWeek(Date(2024, 01, 01));
+    expect(sessionWeek.sessions.map((e) => e.started.day).toList(),
+        [1, 3, 4, 5, 6, 7]);
   });
 }
