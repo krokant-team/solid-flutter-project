@@ -2,6 +2,7 @@ import 'package:shleappy/data/session.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 Future<void> initTables() async {
+  await Hive.initFlutter();
   await Future.wait([
     SleepSessionTable.init(),
   ]);
@@ -26,30 +27,35 @@ class SleepSessionTable implements Table<SleepSession> {
     return _instance!;
   }
 
-  SleepSessionTable._();
+  const SleepSessionTable._();
 
   static Future<void> init() async {
-    await Hive.openBox(name);
-    _instance = SleepSessionTable._();
+    await Hive.openBox<Map>(name);
+    _instance = const SleepSessionTable._();
   }
 
   @override
   List<SleepSession> getItems() {
-    return Hive.box(name).values.map((e) => SleepSession.fromJson(e)).toList();
+    return Hive.box<Map>(name)
+        .values
+        .map((e) => SleepSession.fromJson(e))
+        .toList();
   }
 
   @override
   bool putItem(SleepSession item) {
-    Hive.box(name).add(item.toJson());
+    Hive.box<Map>(name).add(item.toJson());
     return true;
   }
 
   @override
   bool removeItem(SleepSession item) {
-    if (item.id == null || item != Hive.box(name).getAt(item.id!)) {
+    final box = Hive.box<Map>(name);
+    if (item.id == null ||
+        item != SleepSession.fromJson(box.getAt(item.id!)!)) {
       return false;
     }
-    Hive.box(name).deleteAt(item.id!);
+    box.deleteAt(item.id!);
     return true;
   }
 }
