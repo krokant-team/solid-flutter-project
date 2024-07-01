@@ -1,5 +1,6 @@
 import 'package:date_only_field/date_only_field_with_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shleappy/data/date_patch.dart';
 import 'package:shleappy/data/session.dart';
 import 'package:shleappy/data/tables.dart';
 
@@ -15,9 +16,9 @@ class SessionWeek {
         end = getWeekEnd(anyDate);
 
   static Date getWeekStart(Date date) =>
-      date - Duration(days: date.weekday - DateTime.monday);
+      date - Duration(days: date.pweekday - DateTime.monday);
   static Date getWeekEnd(Date date) =>
-      date + Duration(days: DateTime.sunday - date.weekday);
+      date + Duration(days: DateTime.sunday - date.pweekday);
   SessionWeek next() => SessionWeek(start + const Duration(days: weekDays));
   SessionWeek previous() => SessionWeek(start - const Duration(days: weekDays));
 }
@@ -39,7 +40,7 @@ class SleepSessionHistory {
     var start = 0, end = _sessions.length;
     var mid = (end + start) ~/ 2;
     while (true) {
-      var d = _sessions[mid].startDate.difference(date).inDays;
+      var d = _sessions[mid].startDate.diff(date);
       if (d == 0 || mid == start) {
         break;
       } else if (d < 0) {
@@ -52,7 +53,7 @@ class SleepSessionHistory {
     }
     do {
       ++mid;
-    } while (mid < end && date.isSameAs(_sessions[mid].startDate));
+    } while (mid < end && date.pisSameAs(_sessions[mid].startDate));
     return mid;
   }
 
@@ -60,7 +61,7 @@ class SleepSessionHistory {
     if (_sessions.isEmpty) return [];
     var iEnd = _findStartingDate(end);
     var iStart = iEnd;
-    while (iStart > 0 && !start.toDateTime().isAfter(_sessions[iStart - 1].endDate.toDateTime())) {
+    while (iStart > 0 && !start.pisAfter(_sessions[iStart - 1].endDate)) {
       --iStart;
     }
     return _sessions.sublist(iStart, iEnd);

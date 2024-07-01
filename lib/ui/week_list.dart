@@ -2,6 +2,7 @@ import 'package:date_only_field/date_only_field_with_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:shleappy/data/date_patch.dart';
 import 'package:shleappy/data/history.dart';
 import 'package:shleappy/data/session.dart';
 
@@ -19,7 +20,7 @@ class ChosenSession extends Notifier<SleepSession?> {
 }
 
 class _SessionButton extends ConsumerWidget {
-  static const Radius _radius = Radius.circular(32);
+  static const Radius _radius = Radius.circular(64);
 
   final SleepSession session;
   final Date weekStart;
@@ -39,10 +40,11 @@ class _SessionButton extends ConsumerWidget {
     final style = ElevatedButton.styleFrom(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.horizontal(
-          left: weekStart.isAfter(session.startDate) ? Radius.zero : _radius,
-          right: weekEnd.isBefore(session.endDate) ? Radius.zero : _radius,
+          left: weekStart.pisAfter(session.startDate) ? Radius.zero : _radius,
+          right: weekEnd.pisBefore(session.endDate) ? Radius.zero : _radius,
         ),
       ),
+      padding: const EdgeInsets.all(2),
       elevation: isChosen ? 1.0 : 5.0,
       backgroundColor: isChosen
           ? Theme.of(context).colorScheme.primary
@@ -52,7 +54,7 @@ class _SessionButton extends ConsumerWidget {
           : Theme.of(context).colorScheme.onPrimaryContainer,
     );
     return Padding(
-      padding: const EdgeInsets.all(4.0),
+      padding: const EdgeInsets.all(6.0),
       child: ElevatedButton(
         style: style,
         onPressed: () {
@@ -113,7 +115,7 @@ class _WeekGrid extends ConsumerWidget {
         child: Column(
           children: [
             Text(
-              date.formatDay,
+              date.pday.toString().padRight(2),
               style: Theme.of(context).textTheme.labelLarge,
             ),
             Text(
@@ -129,7 +131,7 @@ class _WeekGrid extends ConsumerWidget {
   Widget _buildWeekDates(SessionWeek week) {
     List<Widget> widgets = [];
     for (var date = week.start;
-        !date.isAfter(week.end);
+        !date.pisAfter(week.end);
         date += const Duration(days: 1)) {
       widgets.add(Expanded(child: _buildWeekDate(date)));
     }
@@ -164,17 +166,17 @@ class _WeekGrid extends ConsumerWidget {
     var flex = 0;
     var space = false;
     for (Date c = week.start;
-        !c.isAfter(week.end);
+        !c.pisAfter(week.end);
         c += const Duration(days: 1)) {
-      if (!c.isBefore(iter.current.startDate) &&
-          !c.isAfter(iter.current.endDate)) {
+      if (!c.pisBefore(iter.current.startDate) &&
+          !c.pisAfter(iter.current.endDate)) {
         if (space) {
           widgets.add(Spacer(flex: flex));
           space = false;
           flex = 0;
         }
         ++flex;
-        if (c.isSameAs(iter.current.endDate)) {
+        if (c.pisSameAs(iter.current.endDate)) {
           widgets.add(Flexible(
               fit: FlexFit.tight,
               flex: flex,
@@ -186,7 +188,7 @@ class _WeekGrid extends ConsumerWidget {
               )));
           flex = 0;
           if (!iter.moveNext()) {
-            if (c.isBefore(week.end)) {
+            if (c.pisBefore(week.end)) {
               widgets.add(Spacer(flex: week.end.difference(c).inDays));
               break;
             }
@@ -237,13 +239,11 @@ class WeekSwitch extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final week = ref.watch(weekProvider);
-    final bool sameYear =
-        week.start.toDateTime().year == week.end.toDateTime().year;
-    final bool sameWeek =
-        week.start.toDateTime().month == week.end.toDateTime().month;
+    final bool sameYear = week.start.pyear == week.end.pyear;
+    final bool sameWeek = week.start.pmonth == week.end.pmonth;
     final String label = sameWeek
-        ? "${DateFormat.MMMM().format(week.start.toDateTime())} ${week.start.toDateTime().year}"
-        : "${DateFormat.MMMM().format(week.start.toDateTime())}${sameYear ? '' : ' ${week.start.toDateTime().year}'} — ${DateFormat.MMMM().format(week.end.toDateTime())} ${week.end.toDateTime().year}";
+        ? "${DateFormat.MMMM().format(week.start.toDateTime())} ${week.start.pyear}"
+        : "${DateFormat.MMMM().format(week.start.toDateTime())}${sameYear ? '' : ' ${week.start.pyear}'} — ${DateFormat.MMMM().format(week.end.toDateTime())} ${week.end.pyear}";
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -270,11 +270,11 @@ class WeekSwitch extends ConsumerWidget {
   Widget _buildButton(
           {required Icon icon, required void Function()? onPressed}) =>
       OutlinedButton(
-        child: icon,
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
-          shape: CircleBorder(),
+          shape: const CircleBorder(),
         ),
+        child: icon,
       );
 }
 
