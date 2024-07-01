@@ -34,8 +34,7 @@ jobs:
       run: flutter build web
 
     - name: Deploy to GitHub Pages
-      uses: bluefireteam/actions-gh-pages@v7
+      uses: bluefireteam/flutter-gh-pages@v7
       with:
         baseHref: "/solid-flutter-project/"
-        customArgs: --target="lib/main.dart"
         github_token: ${{ secrets.GITHUB_TOKEN }}
