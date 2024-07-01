@@ -1,3 +1,5 @@
+import 'package:date_only_field/date_only_field_with_extensions.dart';
+
 enum SleepQuality {
   none;
 
@@ -38,6 +40,8 @@ class SleepSession {
   int get durationInSecs => (ended.difference(started)).inSeconds;
   int get durationInMins => (ended.difference(started)).inMinutes;
   int get durationInHours => (ended.difference(started)).inHours;
+  Date get startDate => Date.fromDateTime(started);
+  Date get endDate => Date.fromDateTime(ended);
 
   SleepSession({
     this.id,
