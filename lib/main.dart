@@ -39,10 +39,10 @@ final ThemeData lightTheme = ThemeData(
 );
 
 final ThemeData darkTheme = ThemeData(
-    primaryColor: Colors.indigo,
-    disabledColor: Colors.indigoAccent,
-    scaffoldBackgroundColor: const Color.fromRGBO(26, 26, 26, 1),
-    focusColor: Colors.white,
-    shadowColor: Colors.grey,
-    splashColor: const Color.fromRGBO(33, 33, 33, 1),
+  primaryColor: Colors.indigo,
+  disabledColor: Colors.indigoAccent,
+  scaffoldBackgroundColor: const Color.fromRGBO(26, 26, 26, 1),
+  focusColor: Colors.white,
+  shadowColor: Colors.grey,
+  splashColor: const Color.fromRGBO(33, 33, 33, 1),
 );

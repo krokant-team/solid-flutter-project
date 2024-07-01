@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shleappy/dialog_windows.dart';
 
 import '../main.dart';
 
@@ -27,14 +28,12 @@ class HomeScreen extends ConsumerWidget {
         final currentTheme = ref.watch(themeProvider);
         return IconButton(
           alignment: Alignment.center,
-
           icon: Icon(
             currentTheme.focusColor == Colors.white
                 ? Icons.wb_sunny
                 : Icons.nightlight_round,
             color: Theme.of(context).focusColor,
           ),
-
           onPressed: () {
             if (currentTheme.focusColor == Colors.white) {
               ref.read(themeProvider.notifier).state = lightTheme;
@@ -48,10 +47,7 @@ class HomeScreen extends ConsumerWidget {
   }
 
   Widget _contentElevatedButton(
-      BuildContext context,
-      WidgetRef ref,
-      double screenWidth
-      ) {
+      BuildContext context, WidgetRef ref, double screenWidth) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 250),
       transitionBuilder: (child, animation) {
@@ -60,7 +56,6 @@ class HomeScreen extends ConsumerWidget {
           child: child,
         );
       },
-
       child: Icon(
         ref.watch(isSleepingProvider)
             ? Icons.stop_rounded
@@ -93,12 +88,12 @@ class HomeScreen extends ConsumerWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
+            if (ref.read(isSleepingProvider)) {
+              DialogWindows.showFeedbackDialog(context, ref);
+            }
             ref.read(isSleepingProvider.notifier).state =
-              !ref.watch(isSleepingProvider);
-
-            // TODO add logic to start / stop the session
+                !ref.watch(isSleepingProvider);
           },
-
           style: _styleElevatedButton(context, screenWidth),
           child: _contentElevatedButton(context, ref, screenWidth),
         ),
