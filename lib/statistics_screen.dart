@@ -24,7 +24,8 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
 
   void _goToPreviousWeek() {
     setState(() {
-      _currentStartOfWeek = _currentStartOfWeek.subtract(const Duration(days: 7));
+      _currentStartOfWeek =
+          _currentStartOfWeek.subtract(const Duration(days: 7));
     });
   }
 
@@ -37,7 +38,8 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
   List<double> getAmounts(List<SleepSession> sessions) {
     List<double> result = List.filled(7, 0);
     for (var session in sessions) {
-      if (session.ended.isAfter(_currentStartOfWeek.add(const Duration(days: 6)))) continue;
+      if (session.ended
+          .isAfter(_currentStartOfWeek.add(const Duration(days: 6)))) continue;
       int day = session.ended.weekday % 7;
       result[day] += session.durationInMins / 60;
     }
@@ -47,8 +49,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
   List<int> getRatings(List<SleepSession> sessions) {
     List<int> result = [];
     for (var session in sessions) {
-      if (session.ended.isAfter(_currentStartOfWeek.add(const Duration(days: 6)))) continue;
-      result.add(session.quality.index);
+      if (session.ended
+          .isAfter(_currentStartOfWeek.add(const Duration(days: 6)))) continue;
+      result.add(session.quality);
     }
     return result;
   }
@@ -56,7 +59,9 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
   @override
   Widget build(BuildContext context) {
     final endOfWeek = _currentStartOfWeek.add(const Duration(days: 6));
-    final sleepSessions = ref.watch(SleepSessionHistoryNotifier.provider).intervalInDays(_currentStartOfWeek, endOfWeek);
+    final sleepSessions = ref
+        .watch(SleepSessionHistoryNotifier.provider)
+        .intervalInDays(_currentStartOfWeek, endOfWeek);
     // sessions to test
     /* final sleepSessions = [
       SleepSession(started: DateTime(2024, 7, 6, 21), ended: DateTime(2024, 7, 7, 7), quality: SleepQuality.none),
@@ -65,7 +70,8 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('${DateFormat.MMMd().format(_currentStartOfWeek)} - ${DateFormat.MMMd().format(endOfWeek)}'),
+        title: Text(
+            '${DateFormat.MMMd().format(_currentStartOfWeek)} - ${DateFormat.MMMd().format(endOfWeek)}'),
         actions: [
           IconButton(
             onPressed: _goToPreviousWeek,

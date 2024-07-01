@@ -14,8 +14,7 @@ class CalendarScreen extends ConsumerWidget {
           color: Theme.of(context).disabledColor,
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          fontFamily: 'CupertinoSystemDisplay'
-      ),
+          fontFamily: 'CupertinoSystemDisplay'),
     );
   }
 
@@ -27,18 +26,16 @@ class CalendarScreen extends ConsumerWidget {
     return '$day.$month.$year';
   }
 
-  Widget _calendar(
-      BuildContext context,
-      WidgetRef ref,
-      {void Function(DateTime, DateTime)? onDaySelected}
-      ) {
+  Widget _calendar(BuildContext context, WidgetRef ref,
+      {void Function(DateTime, DateTime)? onDaySelected}) {
     return TableCalendar(
       focusedDay: ref.watch(focusedDayProvider),
       firstDay: DateTime.utc(2024, 1, 1),
       lastDay: DateTime.utc(2029, 12, 31),
       headerStyle: _calendarHeaderStyle(context),
       availableGestures: AvailableGestures.all,
-      selectedDayPredicate: (day) => isSameDay(day, ref.watch(focusedDayProvider)),
+      selectedDayPredicate: (day) =>
+          isSameDay(day, ref.watch(focusedDayProvider)),
       onDaySelected: onDaySelected,
       calendarStyle: _calendarStyle(context),
       daysOfWeekStyle: _daysOfWeekStyle(),
@@ -49,19 +46,15 @@ class CalendarScreen extends ConsumerWidget {
     return HeaderStyle(
       formatButtonVisible: false,
       titleCentered: true,
-
       titleTextStyle: TextStyle(
           fontSize: 36,
           fontWeight: FontWeight.w900,
           fontFamily: 'CupertinoSystemDisplay',
-          color: Theme.of(context).focusColor
-      ),
-
+          color: Theme.of(context).focusColor),
       leftChevronIcon: Icon(
         Icons.chevron_left,
         color: Theme.of(context).focusColor,
       ),
-
       rightChevronIcon: Icon(
         Icons.chevron_right,
         color: Theme.of(context).focusColor,
@@ -72,39 +65,22 @@ class CalendarScreen extends ConsumerWidget {
   CalendarStyle _calendarStyle(BuildContext context) {
     return CalendarStyle(
       selectedDecoration: BoxDecoration(
-          color: Theme.of(context).primaryColor,
-          shape: BoxShape.circle
-      ),
-
+          color: Theme.of(context).primaryColor, shape: BoxShape.circle),
       todayDecoration: BoxDecoration(
           color: Theme.of(context).primaryColor.withOpacity(0.8),
-          shape: BoxShape.circle
-      ),
-
+          shape: BoxShape.circle),
       defaultTextStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).focusColor
-      ),
-
+          fontWeight: FontWeight.bold, color: Theme.of(context).focusColor),
       weekendTextStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).disabledColor
-      ),
-
+          fontWeight: FontWeight.bold, color: Theme.of(context).disabledColor),
       selectedTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).scaffoldBackgroundColor
-      ),
-
+          color: Theme.of(context).scaffoldBackgroundColor),
       outsideTextStyle: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).shadowColor
-      ),
-
+          fontWeight: FontWeight.bold, color: Theme.of(context).shadowColor),
       todayTextStyle: TextStyle(
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).scaffoldBackgroundColor
-      ),
+          color: Theme.of(context).scaffoldBackgroundColor),
     );
   }
 
@@ -116,10 +92,7 @@ class CalendarScreen extends ConsumerWidget {
   }
 
   Widget _sessionInfo(
-      BuildContext context,
-      WidgetRef ref,
-      double screenHeight
-      ) {
+      BuildContext context, WidgetRef ref, double screenHeight) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +118,6 @@ class CalendarScreen extends ConsumerWidget {
         ),
 
         _sessionDetailsItem(context, 'Start time: '),
-        //TODO add start time
         _sessionDetailsItem(context, 'End Time: '),
         //TODO add end time
         _sessionDetailsItem(context, 'Quality rating: '),
@@ -156,35 +128,22 @@ class CalendarScreen extends ConsumerWidget {
     );
   }
 
-  Widget _sessionInfoWithBorder(
-      BuildContext context,
-      WidgetRef ref,
-      double screenHeight,
-      double screenWidth
-      ) {
+  Widget _sessionInfoWithBorder(BuildContext context, WidgetRef ref,
+      double screenHeight, double screenWidth) {
     return Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12.0),
           border: Border.all(
               color: Theme.of(context).disabledColor.withOpacity(0.2),
-              width: 4
-          ),
+              width: 4),
         ),
-
         width: screenWidth * 0.84,
-
         padding: EdgeInsets.only(
             left: screenWidth * 0.03,
             right: screenWidth * 0.03,
             top: screenHeight * 0.01,
-            bottom: screenHeight * 0.01
-        ),
-
-        child: _sessionInfo(
-            context,
-            ref,
-            screenHeight
-        ));
+            bottom: screenHeight * 0.01),
+        child: _sessionInfo(context, ref, screenHeight));
   }
 
   @override
@@ -205,19 +164,11 @@ class CalendarScreen extends ConsumerWidget {
                 right: screenWidth * 0.06,
                 top: screenHeight * 0.04,
                 bottom: screenHeight * 0.04),
-            child: _calendar(
-                context,
-                ref,
-                onDaySelected: onDaySelected
-            ),
+            child: _calendar(context, ref, onDaySelected: onDaySelected),
           ),
           Expanded(
               child: _sessionInfoWithBorder(
-                  context,
-                  ref,
-                  screenHeight,
-                  screenWidth
-              )),
+                  context, ref, screenHeight, screenWidth)),
           SizedBox(
             height: screenHeight * 0.005,
           ),

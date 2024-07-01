@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shleappy/data/session.dart';
 import 'package:shleappy/screens/dialogs/dialog_windows.dart';
 
 import '../main.dart';
 
 final isSleepingProvider = StateProvider<bool>((ref) => false);
 final themeProvider = StateProvider<ThemeData>((ref) => lightTheme);
+final endSleepTimeProvider = StateProvider<DateTime>((ref) => DateTime.now());
+final startSleepTimeProvider = StateProvider<DateTime>((ref) => DateTime.now());
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -89,8 +92,12 @@ class HomeScreen extends ConsumerWidget {
         child: ElevatedButton(
           onPressed: () {
             if (ref.read(isSleepingProvider)) {
+              ref.read(endSleepTimeProvider.notifier).state = DateTime.now();
               DialogWindows.showFeedbackDialog(context, ref);
+            } else {
+              ref.read(startSleepTimeProvider.notifier).state = DateTime.now();
             }
+
             ref.read(isSleepingProvider.notifier).state =
                 !ref.watch(isSleepingProvider);
           },

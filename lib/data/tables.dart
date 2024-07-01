@@ -11,6 +11,7 @@ abstract interface class Table<T> {
   List<T> getItems();
   putItem(T item);
   removeItem(T item);
+  T? getItemById(int id);
 }
 
 class SleepSessionTable implements Table<SleepSession> {
@@ -40,6 +41,7 @@ class SleepSessionTable implements Table<SleepSession> {
 
   @override
   bool putItem(SleepSession item) {
+    if (getItemById(item.id) != null) {}
     Hive.box(name).add(item.toJson());
     return true;
   }
@@ -51,5 +53,14 @@ class SleepSessionTable implements Table<SleepSession> {
     }
     Hive.box(name).deleteAt(item.id!);
     return true;
+  }
+
+  @override
+  SleepSession? getItemById(int id) {
+    var box = Hive.box(name);
+    if (id >= 0 && id < box.length) {
+      return SleepSession.fromJson(box.getAt(id));
+    }
+    return null;
   }
 }

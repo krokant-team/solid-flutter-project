@@ -1,14 +1,3 @@
-enum SleepQuality {
-  none;
-
-  static SleepQuality? parse(String string) {
-    for (SleepQuality value in SleepQuality.values) {
-      if (string == value.name) return value;
-    }
-    return null;
-  }
-}
-
 class SleepSession {
   static const String fieldId = 'id';
   static const String fieldStarted = 'start_time';
@@ -16,10 +5,10 @@ class SleepSession {
   static const String fieldQuality = 'sleep_quality';
   static const String fieldComment = 'commentary';
 
-  int? id;
+  int id;
   DateTime started;
   DateTime ended;
-  SleepQuality quality;
+  int quality;
   String comment;
 
   @override
@@ -40,18 +29,19 @@ class SleepSession {
   int get durationInHours => (ended.difference(started)).inHours;
 
   SleepSession({
-    this.id,
+    required this.id,
     required this.started,
     required this.ended,
     required this.quality,
     this.comment = '',
   }) {
-    if (durationInMins <= 0 || durationInHours >= 24) {
+    if (durationInHours >= 24) {
       throw const FormatException("Cannot create a sleep session");
     }
   }
 
   factory SleepSession.copy(SleepSession other) => SleepSession(
+        id: other.id,
         started: other.started,
         ended: other.ended,
         quality: other.quality,
@@ -62,15 +52,14 @@ class SleepSession {
         id: json[fieldId],
         started: DateTime.fromMillisecondsSinceEpoch(json[fieldStarted] ?? 0),
         ended: DateTime.fromMillisecondsSinceEpoch(json[fieldEnded] ?? 0),
-        quality:
-            SleepQuality.parse(json[fieldQuality] ?? '') ?? SleepQuality.none,
+        quality: json[fieldQuality] ?? 0,
         comment: json[fieldComment] ?? '',
       );
 
   Map toJson() => {
         fieldStarted: started.millisecondsSinceEpoch,
         fieldEnded: ended.millisecondsSinceEpoch,
-        fieldQuality: quality.name,
+        fieldQuality: quality,
         fieldComment: comment,
       };
 }
