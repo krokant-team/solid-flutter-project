@@ -20,20 +20,21 @@ class SleepSessionHistory {
     var start = 0, end = _sessions.length;
     var mid = (end + start) ~/ 2;
     while (true) {
-      var d = date.difference(_sessions[mid].started);
-      if (d.inDays == 0 || mid == start) {
+      var d = Date.fromDateTime(_sessions[mid].started);
+      if (date.isSameAs(d) || mid == start) {
         break;
-      } else if (d.isNegative) {
-        end = mid;
+      } else if (date.isAfter(d)) {
+        start = mid;
         mid = (end + start) ~/ 2;
       } else {
-        start = mid;
+        end = mid;
         mid = (end + start) ~/ 2;
       }
     }
     do {
       ++mid;
-    } while (mid < end && date.difference(_sessions[mid].started).inDays == 0);
+    } while (
+        mid < end && date.isSameAs(Date.fromDateTime(_sessions[mid].started)));
     return mid;
   }
 
@@ -42,7 +43,7 @@ class SleepSessionHistory {
     var iEnd = _findStartingDate(end);
     var iStart = iEnd;
     while (iStart > 0 &&
-        start.difference(_sessions[iStart - 1].ended).inDays < 0) {
+        start.isBefore(Date.fromDateTime(_sessions[iStart - 1].ended))) {
       --iStart;
     }
     return _sessions.sublist(iStart, iEnd);
