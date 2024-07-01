@@ -1,5 +1,11 @@
 # Shleappy – sleep-tracking app
 
+### Screenshots and GIFs
+
+![](https://github.com/krokant-team/solid-flutter-project/blob/main/visuals_readme/calendar_usage.gif)
+![](https://github.com/krokant-team/solid-flutter-project/blob/main/visuals_readme/statisctics_screen.jpg)
+![](https://github.com/krokant-team/solid-flutter-project/blob/main/visuals_readme/theme_changing.gif)
+
 ### Instruction for usage
 - Move to a different screen: click on the corresponding icon on the bottom navigation bar.
 - Start a new session: click the start button on the Home screen.
