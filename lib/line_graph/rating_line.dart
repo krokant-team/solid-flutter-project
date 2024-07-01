@@ -20,7 +20,7 @@ class RatingLine extends StatelessWidget {
     return LineChart(
       LineChartData(
         maxY: 5,
-        minY: -5,
+        minY: 0,
         gridData: const FlGridData(
           show: false,
           drawHorizontalLine: false,
