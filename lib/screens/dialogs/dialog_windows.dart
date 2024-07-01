@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shleappy/mood_selection.dart';
+import 'package:shleappy/screens/dialogs/mood_selection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final ratingProvider = StateProvider<int>((ref) => 1);
@@ -65,7 +65,6 @@ class DialogWindows {
                   child: OutlinedButton(
                       onPressed: () {
                         String text = controller.text;
-                        print(ref.read(ratingProvider));
 
                         // Get rating here
 

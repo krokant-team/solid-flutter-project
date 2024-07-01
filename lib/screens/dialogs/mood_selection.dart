@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shleappy/dialog_windows.dart';
+import 'package:shleappy/screens/dialogs/dialog_windows.dart';
 
 class RatingStars extends StatelessWidget {
   final Function(int)? onRatingChanged;
