@@ -31,6 +31,7 @@ class SleepSession {
   int get durationInHours => (ended.difference(started)).inHours;
   Date get startDate => Date.fromDateTime(started);
   Date get endDate => Date.fromDateTime(ended);
+  int get daysTouched => endDate.difference(startDate).inDays + 1;
 
   SleepSession({
     this.id,
