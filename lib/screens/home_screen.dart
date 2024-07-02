@@ -17,6 +17,18 @@ class HomeScreen extends ConsumerWidget {
   PreferredSizeWidget _homeAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Theme.of(context).splashColor,
+      // TODO dev only!!
+      leading: Visibility.maintain(
+        visible: false,
+        child: Consumer(
+          builder: (context, ref, widget) => IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              DialogWindows.showEditorDialog(context, ref);
+            },
+          ),
+        ),
+      ),
       actions: [
         Padding(
           padding: const EdgeInsets.all(8.0),

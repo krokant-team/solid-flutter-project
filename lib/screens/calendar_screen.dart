@@ -16,19 +16,21 @@ class CalendarScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final chosenProvider = sleepWeekWidget.chosenProvider;
     final SleepSession? chosen = ref.watch(chosenProvider);
-    return Center(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Expanded(
-            flex: 3,
-            child: sleepWeekWidget,
-          ),
-          Expanded(
-            flex: 5,
-            child: _sessionInfoWithBorder(chosen, context, ref),
-          ),
-        ],
+    return SafeArea(
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              flex: 3,
+              child: sleepWeekWidget,
+            ),
+            Expanded(
+              flex: 5,
+              child: _sessionInfoWithBorder(chosen, context, ref),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -116,7 +118,7 @@ class CalendarScreen extends ConsumerWidget {
         ),
         Align(
           alignment: Alignment.bottomRight,
-          child: Visibility.maintain(
+          child: Visibility(
             visible: chosen != null,
             child: Padding(
               padding: const EdgeInsets.all(16),

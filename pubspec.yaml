@@ -46,6 +46,7 @@ dev_dependencies:
   custom_lint:
   riverpod_lint: ^2.3.12
   flutter_lints: ^3.0.0
+  omni_datetime_picker: ^2.0.2
 
 dependency_overrides:
   analyzer: '>=6.5.0 <7.0.0'  # Adjust the version range as needed
