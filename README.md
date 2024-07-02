@@ -14,6 +14,10 @@
 - Statistics of sleep sessions (there are two graphs: with sleep duration and rating).
 - Beautiful user-friendly interface.
 
+### Presentation
+
+[Link to the Presentation](https://www.figma.com/slides/3IUH6nAY9S2z27Zyr4vQgR/Untitled?node-id=1-44&t=N3cQJ43gJpcp6bFY-1)
+
 ### Screenshots and GIFs
 
 ![Calendar Usage](https://github.com/krokant-team/solid-flutter-project/blob/main/visuals_readme/calendar_usage.gif)
