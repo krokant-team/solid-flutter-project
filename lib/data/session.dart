@@ -1,3 +1,5 @@
+import 'package:date_only_field/date_only_field_with_extensions.dart';
+
 class SleepSession {
   static const String fieldId = 'id';
   static const String fieldStarted = 'start_time';
@@ -5,7 +7,7 @@ class SleepSession {
   static const String fieldQuality = 'sleep_quality';
   static const String fieldComment = 'commentary';
 
-  int id;
+  int? id;
   DateTime started;
   DateTime ended;
   int quality;
@@ -27,21 +29,23 @@ class SleepSession {
   int get durationInSecs => (ended.difference(started)).inSeconds;
   int get durationInMins => (ended.difference(started)).inMinutes;
   int get durationInHours => (ended.difference(started)).inHours;
+  Date get startDate => Date.fromDateTime(started);
+  Date get endDate => Date.fromDateTime(ended);
+  int get daysTouched => endDate.difference(startDate).inDays + 1;
 
   SleepSession({
-    required this.id,
+    this.id,
     required this.started,
     required this.ended,
     required this.quality,
     this.comment = '',
   }) {
-    if (durationInHours >= 24) {
+    if (durationInMins < 0 || durationInHours >= 24) {
       throw const FormatException("Cannot create a sleep session");
     }
   }
 
   factory SleepSession.copy(SleepSession other) => SleepSession(
-        id: other.id,
         started: other.started,
         ended: other.ended,
         quality: other.quality,

@@ -16,7 +16,7 @@ class BottomNavigationWidget extends StatefulWidget {
 
 class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   int _currentIndex = 0;
-  static const List<Widget> _pagesOptions = <Widget>[
+  static List<Widget> _pagesOptions = <Widget>[
     HomeScreen(),
     CalendarScreen(),
     StatisticsScreen(),
