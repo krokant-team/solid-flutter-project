@@ -47,11 +47,13 @@ class _SessionButton extends ConsumerWidget {
       padding: const EdgeInsets.all(2),
       elevation: isChosen ? 1.0 : 5.0,
       backgroundColor: isChosen
-          ? Theme.of(context).colorScheme.primary
-          : Theme.of(context).colorScheme.primaryContainer,
-      foregroundColor: isChosen
-          ? Theme.of(context).colorScheme.onPrimary
-          : Theme.of(context).colorScheme.onPrimaryContainer,
+          ? Theme.of(context).primaryColor
+          : Theme.of(context).disabledColor,
+      // foregroundColor: isChosen
+      //     ? Theme.of(context).focusColor
+      //     : Theme.of(context).focusColor,
+      foregroundColor: Colors.white,
+      shadowColor: Theme.of(context).shadowColor,
     );
     return Padding(
       padding: const EdgeInsets.all(6.0),
@@ -67,7 +69,7 @@ class _SessionButton extends ConsumerWidget {
 }
 
 class ChosenWeek extends Notifier<SessionWeek> {
-  late final SleepSessionHistory _history;
+  late SleepSessionHistory _history;
 
   @override
   SessionWeek build() {
@@ -255,7 +257,14 @@ class WeekSwitch extends ConsumerWidget {
               ref.read(weekProvider.notifier).previousWeek();
             },
           ),
-          Text(label, style: Theme.of(context).textTheme.titleMedium),
+          Text(
+            label,
+            style: TextStyle(
+              color: Theme.of(context).focusColor,
+              fontSize: 21,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           _buildButton(
             icon: const Icon(Icons.arrow_right),
             onPressed: () {

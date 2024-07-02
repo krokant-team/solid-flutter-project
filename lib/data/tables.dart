@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:shleappy/data/session.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -38,7 +39,7 @@ class SleepSessionTable implements Table<SleepSession> {
   List<SleepSession> getItems() {
     return Hive.box<Map>(name)
         .values
-        .map((e) => SleepSession.fromJson(e))
+        .mapIndexed((i, e) => SleepSession.fromJson(e)..id = i)
         .toList();
   }
 

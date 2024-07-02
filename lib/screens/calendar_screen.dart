@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shleappy/data/date_patch.dart';
+import 'package:shleappy/data/history.dart';
 import 'package:shleappy/data/session.dart';
 import 'package:shleappy/ui/week_list.dart';
 
@@ -63,33 +64,35 @@ class CalendarScreen extends ConsumerWidget {
         dateLabel += "–${_formatDate(chosen.endDate)}";
       }
     }
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-          child: Text(
-            'Sleep Session$dateLabel',
-            style: TextStyle(
-                color: Theme.of(context).disabledColor,
-                fontSize: 28,
-                fontWeight: FontWeight.w800,
-                fontFamily: 'CupertinoSystemDisplay'),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Text(
+              'Sleep Session$dateLabel',
+              style: TextStyle(
+                  color: Theme.of(context).disabledColor,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  fontFamily: 'CupertinoSystemDisplay'),
+            ),
           ),
-        ),
-        Divider(
-          color: Theme.of(context).disabledColor.withOpacity(0.2),
-          thickness: 3,
-        ),
-        _sessionDetailsItem(context,
-            'Start time: ${chosen != null ? DateFormat.Hm().format(chosen.started) : ""}'),
-        _sessionDetailsItem(context,
-            'End Time: ${chosen != null ? DateFormat.Hm().format(chosen.ended) : ""}'),
-        _sessionDetailsItem(
-            context, 'Quality rating: ${chosen != null ? chosen.quality : ""}'),
-        _sessionDetailsItem(
-            context, 'Comments: ${chosen != null ? chosen.comment : ""}'),
-      ],
+          Divider(
+            color: Theme.of(context).disabledColor.withOpacity(0.2),
+            thickness: 3,
+          ),
+          _sessionDetailsItem(context,
+              'Start time: ${chosen != null ? DateFormat.Hm().format(chosen.started) : ""}'),
+          _sessionDetailsItem(context,
+              'End Time: ${chosen != null ? DateFormat.Hm().format(chosen.ended) : ""}'),
+          _sessionDetailsItem(context,
+              'Quality rating: ${chosen != null ? chosen.quality : ""}'),
+          _sessionDetailsItem(
+              context, 'Comments: ${chosen != null ? chosen.comment : ""}'),
+        ],
+      ),
     );
   }
 
@@ -98,14 +101,41 @@ class CalendarScreen extends ConsumerWidget {
     BuildContext context,
     WidgetRef ref,
   ) {
-    return Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          border: Border.all(
-              color: Theme.of(context).disabledColor.withOpacity(0.2),
-              width: 4),
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            border: Border.all(
+                color: Theme.of(context).disabledColor.withOpacity(0.2),
+                width: 4),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: _sessionInfo(chosen, context, ref),
         ),
-        padding: const EdgeInsets.all(16),
-        child: _sessionInfo(chosen, context, ref));
+        Align(
+          alignment: Alignment.bottomRight,
+          child: Visibility.maintain(
+            visible: chosen != null,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: FloatingActionButton(
+                backgroundColor: Theme.of(context).primaryColor,
+                foregroundColor: Colors.white,
+                child: const Icon(Icons.delete),
+                onPressed: () {
+                  if (chosen != null) {
+                    ref
+                        .read(SleepSessionHistoryNotifier.provider.notifier)
+                        .removeItem(chosen);
+                  }
+                },
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
