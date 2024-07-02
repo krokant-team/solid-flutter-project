@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shleappy/data/session.dart';
+import 'package:shleappy/data/tables.dart';
 import 'package:shleappy/screens/dialogs/mood_selection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shleappy/screens/home_screen.dart';
@@ -71,12 +72,12 @@ class DialogWindows {
 
                         int id = int.parse(
                             DateFormat('ddMMyyyy').format(DateTime.now()));
-                        SleepSession(
+                        SleepSessionTable.instance.putItem(SleepSession(
                             id: id,
                             started: ref.read(startSleepTimeProvider),
                             ended: ref.read(endSleepTimeProvider),
                             quality: ref.read(ratingProvider),
-                            comment: text);
+                            comment: text));
 
                         ref.read(ratingProvider.notifier).state = 1;
                         Navigator.of(context).pop();

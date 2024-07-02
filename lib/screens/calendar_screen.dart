@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shleappy/data/session.dart';
+import 'package:shleappy/data/tables.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 
 final focusedDayProvider = StateProvider<DateTime>((ref) => DateTime.now());
 
 class CalendarScreen extends ConsumerWidget {
-  const CalendarScreen({super.key});
-
+  CalendarScreen({super.key});
+  SleepSession? session;
   Widget _sessionDetailsItem(BuildContext context, String text) {
     return Text(
       text,
@@ -28,6 +31,9 @@ class CalendarScreen extends ConsumerWidget {
 
   Widget _calendar(BuildContext context, WidgetRef ref,
       {void Function(DateTime, DateTime)? onDaySelected}) {
+    DateTime time = ref.read(focusedDayProvider);
+    int id = int.parse(DateFormat('ddMMyyyy').format(time));
+    session = SleepSessionTable.instance.getItemById(id);
     return TableCalendar(
       focusedDay: ref.watch(focusedDayProvider),
       firstDay: DateTime.utc(2024, 1, 1),
@@ -107,23 +113,21 @@ class CalendarScreen extends ConsumerWidget {
                 fontFamily: 'CupertinoSystemDisplay'),
           ),
         ),
-
         Divider(
           color: Theme.of(context).disabledColor.withOpacity(0.2),
           thickness: 3,
         ),
-
         SizedBox(
           height: screenHeight * 0.005,
         ),
-
-        _sessionDetailsItem(context, 'Start time: '),
-        _sessionDetailsItem(context, 'End Time: '),
-        //TODO add end time
-        _sessionDetailsItem(context, 'Quality rating: '),
-        //TODO add quality rating
-        _sessionDetailsItem(context, 'Comments: '),
-        //TODO add comments
+        _sessionDetailsItem(context,
+            'Start time: ${session != null ? DateFormat("HH:mm").format(session!.started) : ""}'),
+        _sessionDetailsItem(context,
+            'End Time: ${session != null ? DateFormat("HH:mm").format(session!.ended) : ""}'),
+        _sessionDetailsItem(context,
+            'Quality rating: ${session != null ? session!.quality : ""}'),
+        _sessionDetailsItem(
+            context, 'Comments: ${session != null ? session!.comment : ""}'),
       ],
     );
   }

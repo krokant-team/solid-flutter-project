@@ -41,25 +41,33 @@ class SleepSessionTable implements Table<SleepSession> {
 
   @override
   bool putItem(SleepSession item) {
-    if (getItemById(item.id) != null) {}
-    Hive.box(name).add(item.toJson());
+    SleepSession existing = Hive.box(name).get(item.id);
+    if (existing != null) {
+      if (existing.durationInSecs < item.durationInSecs) {
+        Hive.box(name).put(item.id, item.toJson());
+        return true;
+      }
+      return false;
+    }
+    Hive.box(name).put(item.id, item.toJson());
     return true;
   }
 
   @override
   bool removeItem(SleepSession item) {
-    if (item.id == null || item != Hive.box(name).getAt(item.id!)) {
+    if (item.id == null) {
       return false;
     }
-    Hive.box(name).deleteAt(item.id!);
+    Hive.box(name).delete(item.id!);
     return true;
   }
 
   @override
   SleepSession? getItemById(int id) {
     var box = Hive.box(name);
-    if (id >= 0 && id < box.length) {
-      return SleepSession.fromJson(box.getAt(id));
+    var json = box.get(id);
+    if (json != null) {
+      return SleepSession.fromJson(json);
     }
     return null;
   }
