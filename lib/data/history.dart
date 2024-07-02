@@ -1,7 +1,27 @@
-import 'package:collection/collection.dart';
+import 'package:date_only_field/date_only_field_with_extensions.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shleappy/data/date_patch.dart';
 import 'package:shleappy/data/session.dart';
 import 'package:shleappy/data/tables.dart';
+
+class SessionWeek {
+  static const int weekDays = 7;
+
+  List<SleepSession> sessions = [];
+  Date start;
+  Date end;
+
+  SessionWeek(Date anyDate)
+      : start = getWeekStart(anyDate),
+        end = getWeekEnd(anyDate);
+
+  static Date getWeekStart(Date date) =>
+      date - Duration(days: date.pweekday - DateTime.monday);
+  static Date getWeekEnd(Date date) =>
+      date + Duration(days: DateTime.sunday - date.pweekday);
+  SessionWeek next() => SessionWeek(start + const Duration(days: weekDays));
+  SessionWeek previous() => SessionWeek(start - const Duration(days: weekDays));
+}
 
 class SleepSessionHistory {
   List<SleepSession> _sessions;
@@ -15,22 +35,42 @@ class SleepSessionHistory {
   factory SleepSessionHistory.fromTable() =>
       SleepSessionHistory(SleepSessionTable.instance.getItems());
 
-  List<SleepSession> intervalInDays(DateTime start, DateTime end) {
-    if (_sessions.isEmpty) return [];
-    var iEnd = _sessions.lowerBoundBy<DateTime>(
-      SleepSession.copy(_sessions[0])..started = start,
-      (e) => e.started,
-    );
+  int _findStartingDate(Date date) {
+    if (_sessions.isEmpty) return -1;
+    var start = 0, end = _sessions.length;
+    var mid = (end + start) ~/ 2;
+    while (true) {
+      var d = _sessions[mid].startDate.diff(date);
+      if (d == 0 || mid == start) {
+        break;
+      } else if (d < 0) {
+        start = mid;
+        mid = (end + start) ~/ 2;
+      } else {
+        end = mid;
+        mid = (end + start) ~/ 2;
+      }
+    }
     do {
-      ++iEnd;
-    } while (iEnd < _sessions.length &&
-        _sessions[iEnd].started.difference(end).inDays <= 0);
+      ++mid;
+    } while (mid < end && date.pisSameAs(_sessions[mid].startDate));
+    return mid;
+  }
+
+  List<SleepSession> intervalInDays(Date start, Date end) {
+    if (_sessions.isEmpty) return [];
+    var iEnd = _findStartingDate(end);
     var iStart = iEnd;
-    while (iStart > 0 &&
-        _sessions[iStart - 1].ended.difference(start).inDays >= 0) {
+    while (iStart > 0 && !start.pisAfter(_sessions[iStart - 1].endDate)) {
       --iStart;
     }
     return _sessions.sublist(iStart, iEnd);
+  }
+
+  SessionWeek getSessionWeek(Date date) {
+    var sessionWeek = SessionWeek(date);
+    sessionWeek.sessions = intervalInDays(sessionWeek.start, sessionWeek.end);
+    return sessionWeek;
   }
 }
 

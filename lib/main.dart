@@ -4,8 +4,8 @@ import 'package:shleappy/data/tables.dart';
 import 'package:shleappy/screens/home_screen.dart';
 import 'navigation_widget.dart';
 
-void main() async {
-  await SleepSessionTable.init();
+Future<void> main() async {
+  await initTables();
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -19,15 +19,6 @@ class MyApp extends ConsumerWidget {
       theme: ref.watch(themeProvider),
       home: const BottomNavigationWidget(),
     );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold();
   }
 }
 

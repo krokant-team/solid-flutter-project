@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shleappy/data/history.dart';
 import 'package:shleappy/data/session.dart';
-import 'package:shleappy/data/tables.dart';
 import 'package:shleappy/screens/dialogs/mood_selection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shleappy/screens/home_screen.dart';
-import 'package:intl/intl.dart';
 
 final ratingProvider = StateProvider<int>((ref) => 1);
 
@@ -69,15 +68,13 @@ class DialogWindows {
                   child: OutlinedButton(
                       onPressed: () {
                         String text = controller.text;
-
-                        int id = int.parse(
-                            DateFormat('ddMMyyyy').format(DateTime.now()));
-                        SleepSessionTable.instance.putItem(SleepSession(
-                            id: id,
-                            started: ref.read(startSleepTimeProvider),
-                            ended: ref.read(endSleepTimeProvider),
-                            quality: ref.read(ratingProvider),
-                            comment: text));
+                        ref
+                            .read(SleepSessionHistoryNotifier.provider.notifier)
+                            .putItem(SleepSession(
+                                started: ref.read(startSleepTimeProvider),
+                                ended: ref.read(endSleepTimeProvider),
+                                quality: ref.read(ratingProvider),
+                                comment: text));
 
                         ref.read(ratingProvider.notifier).state = 1;
                         Navigator.of(context).pop();
