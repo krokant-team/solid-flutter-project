@@ -33,9 +33,9 @@ dependencies:
     sdk: flutter
   flutter_riverpod: ^2.5.1
   cupertino_icons: ^1.0.6
+  fl_chart: ^0.68.0
   hive_flutter: ^1.1.0
   date_only_field: ^0.0.14
-  fl_chart: ^0.68.0
   collection: ^1.18.0
   table_calendar: ^3.0.9
   intl: ^0.18.1

@@ -19,7 +19,7 @@ void main() {
       sessionList.add(SleepSession(
         started: starts[i],
         ended: ends[i],
-        quality: SleepQuality.none,
+        quality: 0,
       ));
     }
     var history = SleepSessionHistory(sessionList);
