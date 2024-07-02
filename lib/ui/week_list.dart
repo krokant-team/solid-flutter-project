@@ -14,7 +14,7 @@ class ChosenSession extends Notifier<SleepSession?> {
     return null;
   }
 
-  choose(SleepSession session) {
+  choose(SleepSession? session) {
     state = session;
   }
 }
@@ -95,6 +95,9 @@ class _WeekGrid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final week = ref.watch(weekProvider);
+    WidgetsBinding.instance.addPostFrameCallback((d) {
+      ref.read(chosenProvider.notifier).choose(null);
+    });
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -118,11 +121,19 @@ class _WeekGrid extends ConsumerWidget {
           children: [
             Text(
               date.pday.toString().padRight(2),
-              style: Theme.of(context).textTheme.labelLarge,
+              style: TextStyle(
+                color: Theme.of(context).focusColor,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
             ),
             Text(
               DateFormat.E().format(date.toDateTime()),
-              style: Theme.of(context).textTheme.labelSmall,
+              style: TextStyle(
+                color: Theme.of(context).focusColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ],
         ),
