@@ -88,19 +88,55 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
       ),
       body: Center(
         child: Column(
-          // add here some nice aligment pls
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
+
+            Text(
+              'Sleep Hours per Day',
+              style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  fontFamily: 'CupertinoSystemDisplay',
+                  color: Theme.of(context).focusColor),
+            ),
+
+            SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
+            
             SizedBox(
               height: MediaQuery.sizeOf(context).height * 0.3,
               width: MediaQuery.sizeOf(context).width * 0.9,
               child: SleepAmountBar(weeklySummary: getAmounts(sleepSessions)),
             ),
-            SizedBox(height: MediaQuery.sizeOf(context).height * 0.1),
-            SizedBox(
-              height: MediaQuery.sizeOf(context).height * 0.3,
-              width: MediaQuery.sizeOf(context).width * 0.85,
-              child: RatingLine(weeklyRatings: getRatings(sleepSessions)),
+                        SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
+
+            Text(
+              'Sleep Rating',
+              style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  fontFamily: 'CupertinoSystemDisplay',
+                  color: Theme.of(context).focusColor),
+            ),
+
+            SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
+
+            Container(
+              height: screenHeight * 0.3,
+              width: screenWidth * 0.85,
+              decoration: BoxDecoration(
+                border:
+                    Border.all(color: Theme.of(context).disabledColor.withOpacity(0.2), width: 4),
+                borderRadius: BorderRadius.circular(12.0),
+              ),
+
+              padding: EdgeInsets.only(
+                  left: screenWidth * 0.03,
+                  right: screenWidth * 0.03,
+                  top: screenHeight * 0.03,
+                  bottom: screenHeight * 0.03),
+              child: const RatingLine(
+                  weeklyRatings: getRatings(sleepSessions)),
             ),
           ],
         ),
