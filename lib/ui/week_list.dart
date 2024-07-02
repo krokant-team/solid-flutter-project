@@ -189,7 +189,7 @@ class _WeekGrid extends ConsumerWidget {
           flex = 0;
         }
         ++flex;
-        if (c.pisSameAs(iter.current.endDate)) {
+        if (c.pisSameAs(iter.current.endDate) || c.pisSameAs(week.end)) {
           widgets.add(Flexible(
               fit: FlexFit.tight,
               flex: flex,

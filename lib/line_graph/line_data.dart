@@ -1,6 +1,5 @@
 import 'line_point.dart';
 
-//TODO
 class LineData {
   final List<int> ratings;
   List<LinePoint> lineData = [];

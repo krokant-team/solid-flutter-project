@@ -39,7 +39,7 @@ class SleepAmountBar extends StatelessWidget {
         ),
         barGroups: sleepAmountBarData.barData.map((data) {
           return BarChartGroupData(
-            x: data.day.index,
+            x: data.day/* .index */,
             barRods: [
               BarChartRodData(
                 // bar chart rogs style

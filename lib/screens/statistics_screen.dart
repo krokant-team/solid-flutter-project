@@ -1,49 +1,97 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:date_only_field/date_only_field_with_extensions.dart';
+import 'package:intl/intl.dart';
 import 'package:shleappy/bar_graph/sleep_amount_bar.dart';
+import 'package:shleappy/data/history.dart';
+import 'package:shleappy/data/session.dart';
 import 'package:shleappy/line_graph/rating_line.dart';
-
-class StatisticsScreen extends StatefulWidget {
+class StatisticsScreen extends ConsumerStatefulWidget {
   const StatisticsScreen({super.key});
 
   @override
-  State<StatisticsScreen> createState() => _StatisticsScreenState();
+  ConsumerState<StatisticsScreen> createState() => _StatisticsScreenState();
 }
 
-class _StatisticsScreenState extends State<StatisticsScreen> {
-  int selectedIndex = 0;
+class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
+  DateTime _currentStartOfWeek = _getStartOfWeek(DateTime.now());
+
+  static DateTime _getStartOfWeek(DateTime date) {
+    int daysToSubtract = date.weekday % 7;
+    return DateTime(date.year, date.month, date.day - daysToSubtract);
+  }
+
+  void _goToPreviousWeek() {
+    setState(() {
+      _currentStartOfWeek =
+          _currentStartOfWeek.subtract(const Duration(days: 7));
+    });
+  }
+
+  void _goToNextWeek() {
+    setState(() {
+      _currentStartOfWeek = _currentStartOfWeek.add(const Duration(days: 7));
+    });
+  }
+
+  List<double> getAmounts(List<SleepSession> sessions) {
+    List<double> result = List.filled(7, 0);
+    for (var session in sessions) {
+      if (session.ended
+              .isAfter(_currentStartOfWeek.add(const Duration(days: 6))) ||
+          session.ended.isBefore(_currentStartOfWeek)) continue;
+      int day = session.ended.weekday % 7;
+      result[day] += session.durationInMins / 60;
+    }
+    return result;
+  }
+
+  List<int> getRatings(List<SleepSession> sessions) {
+    List<int> result = [];
+    for (var session in sessions) {
+      if (session.ended
+              .isAfter(_currentStartOfWeek.add(const Duration(days: 6))) ||
+          session.ended.isBefore(_currentStartOfWeek)) continue;
+      result.add(session.quality);
+    }
+    return result;
+  }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    final endOfWeek = _currentStartOfWeek.add(const Duration(days: 6));
+    final sleepSessions = ref
+        .watch(SleepSessionHistoryNotifier.provider)
+        .intervalInDays(Date.fromDateTime(_currentStartOfWeek),
+            Date.fromDateTime(endOfWeek));
+    // sessions to test
+    /* final sleepSessions = [
+      SleepSession(started: DateTime(2024, 7, 6, 21), ended: DateTime(2024, 7, 7, 7), quality: SleepQuality.none),
+      SleepSession(started: DateTime(2024, 6, 30, 10), ended: DateTime(2024, 6, 30, 12), quality: SleepQuality.none),
+    ]; */
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Put week dates here',
-          style: TextStyle(color: Theme.of(context).focusColor),
-        ), // TODO put weeks dates
-
+            '${DateFormat.MMMd().format(_currentStartOfWeek)} - ${DateFormat.MMMd().format(endOfWeek)}'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: _goToPreviousWeek,
             icon: const Icon(Icons.chevron_left),
           ),
-
           IconButton(
-            onPressed: () {},
+            onPressed: _goToNextWeek,
             icon: const Icon(Icons.chevron_right),
           ),
         ],
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       ),
-
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
+            SizedBox(height: screenHeight * 0.01),
 
             Text(
               'Sleep Hours per Day',
@@ -54,15 +102,14 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   color: Theme.of(context).focusColor),
             ),
 
-            SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
-
+            SizedBox(height: screenHeight * 0.03),
+            
             SizedBox(
-              height: MediaQuery.sizeOf(context).height * 0.3,
-              child:
-                  const SleepAmountBar(weeklySummary: [5, 8, 9, 7, 6, 8, 10]),
+              height: screenHeight * 0.3,
+              width: screenWidth * 0.9,
+              child: SleepAmountBar(weeklySummary: getAmounts(sleepSessions)),
             ),
-
-            SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
+                        SizedBox(height: screenHeight * 0.03),
 
             Text(
               'Sleep Rating',
@@ -73,7 +120,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   color: Theme.of(context).focusColor),
             ),
 
-            SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
+            SizedBox(height: screenHeight * 0.02),
 
             Container(
               height: screenHeight * 0.3,
@@ -89,8 +136,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                   right: screenWidth * 0.03,
                   top: screenHeight * 0.03,
                   bottom: screenHeight * 0.03),
-              child: const RatingLine(
-                  weeklyRatings: [3, 0, 2, -1, -5, 4, 2, 5, 0, 1]),
+              child: RatingLine(
+                  weeklyRatings: getRatings(sleepSessions)),
             ),
           ],
         ),
