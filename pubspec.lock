@@ -393,7 +393,7 @@ packages:
     source: hosted
     version: "1.0.0"
   omni_datetime_picker:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: omni_datetime_picker
       sha256: "554eb966e84f8d196cf6e189384141db46a79a192d1a360277ead98e5d6036bd"

@@ -52,7 +52,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
       if (session.ended
               .isAfter(_currentStartOfWeek.add(const Duration(days: 6))) ||
           session.ended.isBefore(_currentStartOfWeek)) continue;
-      result.add(session.quality.index);
+      result.add(session.quality);
     }
     return result;
   }
