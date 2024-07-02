@@ -40,7 +40,7 @@ class SleepSession {
     required this.quality,
     this.comment = '',
   }) {
-    if (durationInMins <= 0 || durationInHours >= 24) {
+    if (durationInMins < 0 || durationInHours >= 24) {
       throw const FormatException("Cannot create a sleep session");
     }
   }

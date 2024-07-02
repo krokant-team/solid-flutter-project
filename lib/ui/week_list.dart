@@ -136,7 +136,7 @@ class _WeekGrid extends ConsumerWidget {
       widgets.add(Expanded(child: _buildWeekDate(date)));
     }
     return Padding(
-      padding: const EdgeInsets.only(top: 8, bottom: 4),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: widgets,
@@ -245,7 +245,7 @@ class WeekSwitch extends ConsumerWidget {
         ? "${DateFormat.MMMM().format(week.start.toDateTime())} ${week.start.pyear}"
         : "${DateFormat.MMMM().format(week.start.toDateTime())}${sameYear ? '' : ' ${week.start.pyear}'} — ${DateFormat.MMMM().format(week.end.toDateTime())} ${week.end.pyear}";
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -288,24 +288,15 @@ class SleepWeekWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(width: 2, color: Colors.grey),
-          borderRadius: BorderRadius.circular(24),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        WeekSwitch(weekProvider: weekProvider),
+        Expanded(
+          child: _WeekGrid(
+              weekProvider: weekProvider, chosenProvider: chosenProvider),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            WeekSwitch(weekProvider: weekProvider),
-            Expanded(
-              child: _WeekGrid(
-                  weekProvider: weekProvider, chosenProvider: chosenProvider),
-            ),
-          ],
-        ),
-      ),
+      ],
     );
   }
 }
