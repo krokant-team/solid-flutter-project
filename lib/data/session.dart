@@ -1,16 +1,5 @@
 import 'package:date_only_field/date_only_field_with_extensions.dart';
 
-enum SleepQuality {
-  none;
-
-  static SleepQuality? parse(String string) {
-    for (SleepQuality value in SleepQuality.values) {
-      if (string == value.name) return value;
-    }
-    return null;
-  }
-}
-
 class SleepSession {
   static const String fieldId = 'id';
   static const String fieldStarted = 'start_time';
@@ -21,7 +10,7 @@ class SleepSession {
   int? id;
   DateTime started;
   DateTime ended;
-  SleepQuality quality;
+  int quality;
   String comment;
 
   @override
@@ -66,15 +55,14 @@ class SleepSession {
         id: json[fieldId],
         started: DateTime.fromMillisecondsSinceEpoch(json[fieldStarted] ?? 0),
         ended: DateTime.fromMillisecondsSinceEpoch(json[fieldEnded] ?? 0),
-        quality:
-            SleepQuality.parse(json[fieldQuality] ?? '') ?? SleepQuality.none,
+        quality: json[fieldQuality] ?? 0,
         comment: json[fieldComment] ?? '',
       );
 
   Map toJson() => {
         fieldStarted: started.millisecondsSinceEpoch,
         fieldEnded: ended.millisecondsSinceEpoch,
-        fieldQuality: quality.name,
+        fieldQuality: quality,
         fieldComment: comment,
       };
 }
