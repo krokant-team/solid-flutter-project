@@ -6,7 +6,6 @@ import 'package:shleappy/bar_graph/sleep_amount_bar.dart';
 import 'package:shleappy/data/history.dart';
 import 'package:shleappy/data/session.dart';
 import 'package:shleappy/line_graph/rating_line.dart';
-
 class StatisticsScreen extends ConsumerStatefulWidget {
   const StatisticsScreen({super.key});
 
@@ -53,13 +52,15 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
       if (session.ended
               .isAfter(_currentStartOfWeek.add(const Duration(days: 6))) ||
           session.ended.isBefore(_currentStartOfWeek)) continue;
-      result.add(session.quality);
+      result.add(session.quality.index);
     }
     return result;
   }
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     final endOfWeek = _currentStartOfWeek.add(const Duration(days: 6));
     final sleepSessions = ref
         .watch(SleepSessionHistoryNotifier.provider)
@@ -90,7 +91,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: MediaQuery.sizeOf(context).height * 0.01),
+            SizedBox(height: screenHeight * 0.01),
 
             Text(
               'Sleep Hours per Day',
@@ -101,14 +102,14 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                   color: Theme.of(context).focusColor),
             ),
 
-            SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
+            SizedBox(height: screenHeight * 0.03),
             
             SizedBox(
-              height: MediaQuery.sizeOf(context).height * 0.3,
-              width: MediaQuery.sizeOf(context).width * 0.9,
+              height: screenHeight * 0.3,
+              width: screenWidth * 0.9,
               child: SleepAmountBar(weeklySummary: getAmounts(sleepSessions)),
             ),
-                        SizedBox(height: MediaQuery.sizeOf(context).height * 0.03),
+                        SizedBox(height: screenHeight * 0.03),
 
             Text(
               'Sleep Rating',
@@ -119,7 +120,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                   color: Theme.of(context).focusColor),
             ),
 
-            SizedBox(height: MediaQuery.sizeOf(context).height * 0.02),
+            SizedBox(height: screenHeight * 0.02),
 
             Container(
               height: screenHeight * 0.3,
@@ -135,7 +136,7 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
                   right: screenWidth * 0.03,
                   top: screenHeight * 0.03,
                   bottom: screenHeight * 0.03),
-              child: const RatingLine(
+              child: RatingLine(
                   weeklyRatings: getRatings(sleepSessions)),
             ),
           ],
